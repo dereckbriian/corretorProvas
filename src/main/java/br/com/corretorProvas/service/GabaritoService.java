@@ -1,51 +1,39 @@
 package br.com.corretorProvas.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class GabaritoService {
 
-    // Caminho onde o arquivo do gabarito está armazenado
-    private static final String GABARITO_FILE_PATH = "src/main/resources/gabarito.txt";
 
-    public String processFiles(MultipartFile file) throws IOException {
-        // Carregar o gabarito
-        List<String> gabarito = readGabarito();
+    public Map<Integer, String> loadGabaritoFromFile(String filePath) throws IOException {
+        Map<Integer, String> gabarito = new HashMap<>();
+        File file = new File(filePath);
 
-        // Carregar as respostas enviadas pelo cliente
-        List<String> respostas = readRespostas(file);
+        // Verifica se o arquivo existe
+        if (!file.exists()) {
+            throw new FileNotFoundException("Arquivo não encontrado: " + filePath);
+        }
 
-        int correctAnswers = 0;
-        int wrongAnswers = 0;
+        // Lê o arquivo de gabarito
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String linha;
 
-        // Comparar as respostas com o gabarito
-        for (int i = 0; i < respostas.size(); i++) {
-            if (respostas.get(i).equals(gabarito.get(i))) {
-                correctAnswers++;
-            } else {
-                wrongAnswers++;
+        while ((linha = reader.readLine()) != null) {
+            // Divide a linha do arquivo em número da questão e respostas
+            String[] partes = linha.split("-");
+            if (partes.length == 2) {
+                int numeroQuestao = Integer.parseInt(partes[0]);
+                String respostas = partes[1];
+                gabarito.put(numeroQuestao, respostas);
             }
         }
 
-        // Retornar o resultado
-        return correctAnswers + "-" + wrongAnswers;
-    }
-
-    private List<String> readGabarito() throws IOException {
-        // Lê o arquivo do gabarito
-        return Files.readAllLines(Paths.get(GABARITO_FILE_PATH));
-    }
-
-    private List<String> readRespostas(MultipartFile file) throws IOException {
-        // Lê as respostas enviadas pelo cliente
-        return new BufferedReader(new InputStreamReader(file.getInputStream()))
-                .lines()
-                .collect(Collectors.toList());
+        reader.close();
+        return gabarito;
     }
 }
