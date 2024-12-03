@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Resultado da Correção</h1>
+    <p th:if="${result}">Resultado: <span th:text="${result}"></span></p>
+    <p th:if="${error}">Erro: <span th:text="${error}"></span></p>
+    <br>
+    <a href="/">Voltar</a>
+</div>
+</body>
+</html>
