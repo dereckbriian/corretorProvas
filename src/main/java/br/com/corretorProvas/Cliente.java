@@ -14,7 +14,7 @@ public class Cliente {
 
             // Enviar o arquivo com respostas
             // Enviar o arquivo com respostas
-            try (BufferedReader fileReader = new BufferedReader(new FileReader("C:\\Users\\Kálysson\\Documents\\Corretor de Prova TCP\\src\\Respostas.txt"))) {
+            try (BufferedReader fileReader = new BufferedReader(new FileReader("src/main/java/br/com/corretorProvas/Respostas.txt"))) {
                 String linha;
                 while ((linha = fileReader.readLine()) != null) {
                     out.println(linha);
