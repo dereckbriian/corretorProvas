@@ -13,30 +13,46 @@ public class Servidor {
     private static Map<Integer, String> gabarito = new HashMap<>();
 
     public static void main(String[] args) {
+        //Chama a função pra carregar o gabarito
         carregarGabarito();
 
+        // Bloco try-with-resources para criar um ServerSocket que será fechado automaticamente
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            // Printa que o servidor esta pronto pra aceitar conexões
             System.out.println("Servidor aguardando conexões na porta " + PORT);
-
+            // Loop infinito para aceitar múltiplas conexões dos clientes
             while (true) {
+                //Aguarda pra aceitar uma nova conexão
                 Socket socket = serverSocket.accept();
+                //Exibe no console o IP do cliente conectado
                 System.out.println("Cliente conectado: " + socket.getInetAddress().getHostAddress());
+                // Cria uma nova thread para lidar com o cliente conectado, evitando bloquear o servidor
+                /*Para cada cliente que se conecta, uma nova thread é criada*/
                 new Thread(new ClienteHandler(socket)).start();
             }
         } catch (IOException e) {
+            //Captura erros e exibe caso exista
             e.printStackTrace();
         }
     }
 
     private static void carregarGabarito() {
+        // Bloco try-with-resources para garantir que o BufferedReader seja fechado automaticamente.
+        // O BufferedReader é usado para ler o conteúdo de um arquivo linha por linha.
         try (BufferedReader br = new BufferedReader(new FileReader("src/main/java/br/com/corretorProvas/Gabarito.txt"))) {
             String linha;
+            // Loop para ler cada linha do arquivo até que não tenha mais linhas
             while ((linha = br.readLine()) != null) {
+                // Divide a linha lida em duas partes: número da questão e resposta
                 String[] partes = linha.split("-");
+                // Converte o numero da questão pra inteiro
                 int numeroQuestao = Integer.parseInt(partes[0]);
+                // Armazena a segunda parte da linha como a resposta correta da questão
                 String resposta = partes[1];
+                // Insere o número da questão e a resposta no mapa
                 gabarito.put(numeroQuestao, resposta);
             }
+            //Só de confirmação printa o gabarito que foi carregado quando terminar
             System.out.println("Gabarito carregado: " + gabarito);
         } catch (IOException e) {
             System.err.println("Erro ao carregar o gabarito: " + e.getMessage());
