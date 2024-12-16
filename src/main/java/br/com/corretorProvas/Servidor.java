@@ -59,21 +59,23 @@ public class Servidor {
         }
     }
 
-
+    // Classe interna que lida com as conexões de clientes de forma independente
     private static class ClienteHandler implements Runnable {
+        // Socket associado ao cliente conectado
         private Socket socket;
-
+        /*Construtor que recebe o socket do cliente*/
         public ClienteHandler(Socket socket) {
             this.socket = socket;
         }
 
         @Override
         public void run() {
+            // Bloco try-with-resources para gerenciar os fluxos de entrada e saída do cliente
             try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                  PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) { // Auto-flush habilitado
 
-                String linha;
-                int acertos = 0, erros = 0;
+                String linha; // Variavel pra armazenar cada linha
+                int acertos = 0, erros = 0; // Variavel para armazenar o numero de acertos e o numero de erros
 
                 System.out.println("Iniciando processamento do cliente...");
 
@@ -81,14 +83,19 @@ public class Servidor {
                 while ((linha = in.readLine()) != null && !linha.isEmpty()) { // Verifica fim da entrada
                     System.out.println("Linha recebida do cliente: " + linha);
                     try {
+                        //Divide a linha recebida em número da questão e resposta do cliente.
                         String[] partes = linha.split("-");
                         int numeroQuestao = Integer.parseInt(partes[0]);
                         String respostaCliente = partes[1];
-
+                        //recupera a resposta correta do gabarito
                         String respostaCorreta = gabarito.get(numeroQuestao);
+
+                        // Verifica se a resposta do cliente bate com a do gabarito
                         if (respostaCorreta != null && respostaCorreta.equals(respostaCliente)) {
+                            //incrementa os acertos
                             acertos++;
                         } else {
+                            //incrementa os erros
                             erros++;
                         }
                     } catch (Exception e) {
@@ -97,6 +104,7 @@ public class Servidor {
                 }
 
                 // Enviar o resultado de volta ao cliente
+                /*formato "acertos-erros"*/
                 String resultado = acertos + "-" + erros;
                 out.println(resultado); // Envia o resultado
                 System.out.println("Resultado enviado ao cliente: " + resultado);
@@ -105,6 +113,7 @@ public class Servidor {
                 System.err.println("Erro ao processar cliente: " + e.getMessage());
             } finally {
                 try {
+                    // Fecha o socket do cliente para liberar recursos
                     socket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
