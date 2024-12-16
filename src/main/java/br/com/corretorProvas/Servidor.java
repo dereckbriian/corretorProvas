@@ -3,11 +3,13 @@ package br.com.corretorProvas;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.HashMap; // Importa a classe Hashmap
 import java.util.Map;
 
 public class Servidor {
+    /*Porta do servidor*/
     private static final int PORT = 12345;
+    /* Cria um mapa estático para armazenar o gabarito, a chave é o número da questão e o valor é a resposta correta*/
     private static Map<Integer, String> gabarito = new HashMap<>();
 
     public static void main(String[] args) {
@@ -93,7 +95,5 @@ public class Servidor {
                 }
             }
         }
-
-
     }
 }

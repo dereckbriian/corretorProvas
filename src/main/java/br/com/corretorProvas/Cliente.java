@@ -13,7 +13,6 @@ public class Cliente {
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
             // Enviar o arquivo com respostas
-            // Enviar o arquivo com respostas
             try (BufferedReader fileReader = new BufferedReader(new FileReader("src/main/java/br/com/corretorProvas/Respostas.txt"))) {
                 String linha;
                 while ((linha = fileReader.readLine()) != null) {
@@ -21,12 +20,10 @@ public class Cliente {
                 }
                 System.out.println("Arquivo de respostas carregado e enviado ao servidor.");
             }
-// Sinalizar que o cliente terminou de enviar dados
+            // Sinalizar que o cliente terminou de enviar dados
             out.println(); // Enviar uma linha vazia
             socket.shutdownOutput(); // Indicar que não haverá mais envio
 
-
-            // Receber o resultado do servidor
             // Receber o resultado do servidor
             String resultado = in.readLine();
             if (resultado != null) {
